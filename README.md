@@ -93,8 +93,14 @@ Add this to your `claude_desktop_config.json` file:
   "mcpServers": {
     "tmux": {
       "command": "uv",
-      "args": ["run", "tmux-mcp"],
-      "cwd": "/path/to/tmux-mcp"
+      "args": [
+        "run",
+        "--with",
+        "mcp[cli]",
+        "mcp",
+        "run",
+        "/path/to/tmux-mcp/tmux_mcp/server.py"
+      ]
     }
   }
 }
@@ -102,21 +108,25 @@ Add this to your `claude_desktop_config.json` file:
 
 Replace `/path/to/tmux-mcp` with the actual path to your tmux-mcp directory.
 
-**Step 3: Restart Claude Desktop**
+**Alternative configuration (if installed globally):**
 
-After saving the configuration, restart Claude Desktop for the changes to take effect.
-
-Or if you have it installed globally:
+If you have tmux-mcp installed globally and want to use the direct execution method:
 
 ```json
 {
   "mcpServers": {
     "tmux": {
-      "command": "tmux-mcp"
+      "command": "uv",
+      "args": ["run", "tmux-mcp"],
+      "cwd": "/path/to/tmux-mcp"
     }
   }
 }
 ```
+
+**Step 3: Restart Claude Desktop**
+
+After saving the configuration, restart Claude Desktop for the changes to take effect.
 
 ## Available Tools
 
@@ -299,13 +309,19 @@ The server also exposes MCP resources for each active session:
 
 ### "Connection error" or "Server failed to start" in Claude Desktop
 
-**Cause**: Dependencies not properly installed in the virtual environment.
+**Common causes and solutions:**
 
-**Solution**:
-1. Navigate to your tmux-mcp directory
-2. Run `uv sync` to ensure all dependencies are installed
-3. Test the server: `uv run tmux-mcp` (should show startup message)
-4. Restart Claude Desktop
+1. **Wrong configuration pattern**: Use the MCP CLI pattern for most reliable operation:
+   ```json
+   "command": "uv",
+   "args": ["run", "--with", "mcp[cli]", "mcp", "run", "/path/to/tmux-mcp/tmux_mcp/server.py"]
+   ```
+
+2. **Dependencies not installed**: Run `uv sync` in the project directory to ensure all dependencies are installed.
+
+3. **Test the server**: Run `uv run tmux-mcp` in the project directory (should show startup message).
+
+4. **Restart Claude Desktop** after making configuration changes.
 
 ### "tmux is not installed"
 Install tmux using your system's package manager.

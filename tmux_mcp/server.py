@@ -240,7 +240,7 @@ async def tmux_kill_session(session_name: str) -> str:
 #         return f"Failed to read session: {e.stderr}"
 
 def main():
-    """Main entry point"""
+    """Main entry point for direct execution"""
     logger.info("Starting tmux-mcp server...")
     
     # Check if tmux is installed
@@ -252,6 +252,13 @@ def main():
     
     # Run the server
     mcp.run(transport="stdio")
+
+# Initialize tmux check for MCP CLI usage
+try:
+    subprocess.run(["tmux", "-V"], capture_output=True, check=True)
+    logger.info("tmux-mcp server ready")
+except (subprocess.CalledProcessError, FileNotFoundError):
+    logger.error("tmux is not installed. Please install tmux first.")
 
 if __name__ == "__main__":
     main()
