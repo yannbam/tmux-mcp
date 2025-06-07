@@ -5,14 +5,19 @@ tmux-mcp: A Model Context Protocol server for interactive CLI programs via tmux
 
 import subprocess
 import logging
+import sys
 from typing import Dict, List, Optional
 from dataclasses import dataclass
 from datetime import datetime
 
 from mcp.server.fastmcp import FastMCP
 
-# Configure logging
-logging.basicConfig(level=logging.INFO)
+# Configure logging - MUST use stderr for stdio transport!
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[logging.StreamHandler(sys.stderr)]
+)
 logger = logging.getLogger(__name__)
 
 @dataclass
