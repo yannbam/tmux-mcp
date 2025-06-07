@@ -35,8 +35,11 @@ A Model Context Protocol (MCP) server that provides Claude and other LLMs with a
 git clone https://github.com/yourusername/tmux-mcp.git
 cd tmux-mcp
 
-# Install with uv
-uv pip install -e .
+# Install dependencies and sync virtual environment
+uv sync
+
+# Verify installation
+uv run tmux-mcp --help
 ```
 
 ### Install with pip
@@ -70,9 +73,20 @@ tmux-mcp
 npx @modelcontextprotocol/inspector uv run tmux-mcp
 ```
 
+**Note**: Before configuring Claude Desktop, test that the server starts correctly by running `uv run tmux-mcp`. You should see a startup message like "Starting tmux-mcp server...". If you get import errors, run `uv sync` first.
+
 #### Configure with Claude Desktop
 
-Add to your Claude Desktop configuration (`~/Library/Application Support/Claude/claude_desktop_config.json` on macOS):
+**Step 1: Locate your Claude Desktop config file**
+
+The configuration file location depends on your operating system:
+- **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+- **Linux**: `~/.config/claude/claude_desktop_config.json`
+
+**Step 2: Add tmux-mcp to your configuration**
+
+Add this to your `claude_desktop_config.json` file:
 
 ```json
 {
@@ -85,6 +99,12 @@ Add to your Claude Desktop configuration (`~/Library/Application Support/Claude/
   }
 }
 ```
+
+Replace `/path/to/tmux-mcp` with the actual path to your tmux-mcp directory.
+
+**Step 3: Restart Claude Desktop**
+
+After saving the configuration, restart Claude Desktop for the changes to take effect.
 
 Or if you have it installed globally:
 
@@ -277,6 +297,16 @@ The server also exposes MCP resources for each active session:
 
 ## Troubleshooting
 
+### "Connection error" or "Server failed to start" in Claude Desktop
+
+**Cause**: Dependencies not properly installed in the virtual environment.
+
+**Solution**:
+1. Navigate to your tmux-mcp directory
+2. Run `uv sync` to ensure all dependencies are installed
+3. Test the server: `uv run tmux-mcp` (should show startup message)
+4. Restart Claude Desktop
+
 ### "tmux is not installed"
 Install tmux using your system's package manager.
 
@@ -287,6 +317,9 @@ Either kill the existing session or use a different name.
 - Check the session is still active with `tmux_list_sessions`
 - Try reading the output to see the current state
 - Some programs may need specific key sequences or timing
+
+### "ImportError: No module named 'mcp'"
+Run `uv sync` in the project directory to install all dependencies.
 
 ## Development
 
